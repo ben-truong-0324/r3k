@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R3K - Prioritize Your Big 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #00ff9d, #00b8ff, #ff00aa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .military-border {
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 0 10px rgba(0, 180, 255, 0.2);
+        }
+        
+        .priority-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #1a1a1a;
+            outline: none;
+        }
+        
+        .priority-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #00ff9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        
+        .priority-slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #00ff9d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 1s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .post-it {
+            transform: rotate(-2deg);
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .post-it:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .post-it.yellow {
+            background: #fff740;
+            color: #333;
+        }
+        
+        .post-it.green {
+            background: #a8ff60;
+            color: #333;
+        }
+        
+        .post-it.pink {
+            background: #ff8dbe;
+            color: #333;
+        }
+        
+        .post-it.blue {
+            background: #7cc0ff;
+            color: #333;
+        }
+        
+        .priority-visualization {
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .tech-icon {
+            filter: drop-shadow(0 0 5px rgba(0, 180, 255, 0.7));
+            transition: all 0.3s ease;
+        }
+        
+        .tech-icon:hover {
+            filter: drop-shadow(0 0 10px rgba(0, 255, 157, 0.9));
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-black bg-opacity-80 backdrop-blur-md fixed w-full z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl font-bold gradient-text">R3K</span>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#features" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Features</a>
+                            <a href="#visualization" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Visualization</a>
+                            <a href="#feedback" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Feedback</a>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <a href="#" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 gradient-text">Focus on Your <span class="underline decoration-blue-500">Big 3</span></h1>
+                    <p class="text-lg text-gray-300 mb-8 max-w-lg">
+                        R3K helps you identify, track, and visualize your top priorities with military precision. 
+                        No more scope creep - just focused execution on what matters most.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#demo" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition duration-300 flex items-center">
+                            <i class="fas fa-play-circle mr-2"></i> Live Demo
+                        </a>
+                        <a href="#" class="bg-transparent border border-blue-500 hover:bg-blue-900 hover:bg-opacity-20 text-white px-6 py-3 rounded-md font-medium transition duration-300 flex items-center">
+                            <i class="fas fa-book mr-2"></i> Documentation
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div class="relative w-full h-96 bg-gray-900 rounded-xl military-border overflow-hidden">
+                        <!-- Interactive Priority Slider Demo -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-8">
+                            <h3 class="text-xl font-medium text-gray-300 mb-6">Set Your Priority Level</h3>
+                            <div class="w-full max-w-md">
+                                <input type="range" min="1" max="3" value="1" class="priority-slider mb-10" id="prioritySlider">
+                                <div class="relative w-64 h-64 mx-auto">
+                                    <!-- Ripple Visualization -->
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-8 h-8 rounded-full bg-white" id="centerDot"></div>
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300" id="ring1">
+                                        <div class="w-32 h-32 rounded-full border-4 border-green-500 animate-pulse" style="animation-duration: 2s;"></div>
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300" id="ring2">
+                                        <div class="w-48 h-48 rounded-full border-4 border-yellow-500 animate-pulse" style="animation-duration: 3s;"></div>
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300" id="ring3">
+                                        <div class="w-64 h-64 rounded-full border-4 border-red-500 animate-pulse" style="animation-duration: 4s;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-5 -right-5 w-32 h-32 bg-blue-900 rounded-full opacity-20 blur-xl"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="py-12 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-center mb-12 gradient-text">Powered By</h2>
+            <div class="flex flex-wrap justify-center gap-12">
+                <div class="tech-icon flex flex-col items-center">
+                    <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="Next.js" class="h-16 w-16">
+                    <span class="mt-2 text-gray-300">Next.js</span>
+                </div>
+                <div class="tech-icon flex flex-col items-center">
+                    <img src="https://cdn.worldvectorlogo.com/logos/d3.svg" alt="D3.js" class="h-16 w-16">
+                    <span class="mt-2 text-gray-300">D3.js</span>
+                </div>
+                <div class="tech-icon flex flex-col items-center">
+                    <img src="https://cdn.worldvectorlogo.com/logos/react-2.svg" alt="React" class="h-16 w-16">
+                    <span class="mt-2 text-gray-300">React</span>
+                </div>
+                <div class="tech-icon flex flex-col items-center">
+                    <img src="https://cdn.worldvectorlogo.com/logos/flask.svg" alt="Flask" class="h-16 w-16">
+                    <span class="mt-2 text-gray-300">Flask</span>
+                </div>
+                <div class="tech-icon flex flex-col items-center">
+                    <img src="https://cdn.worldvectorlogo.com/logos/tailwindcss.svg" alt="Tailwind CSS" class="h-16 w-16">
+                    <span class="mt-2 text-gray-300">Tailwind CSS</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-16 gradient-text">Strategic Priority Management</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-900 p-8 rounded-xl military-border hover:border-blue-500 transition duration-300">
+                    <div class="w-12 h-12 bg-blue-900 bg-opacity-30 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-bullseye text-blue-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-medium text-white mb-3">Focus on the Big 3</h3>
+                    <p class="text-gray-400">
+                        Identify and track your top three priorities each day. The system visually warns you when you're approaching scope creep.
+                    </p>
+                </div>
+                <div class="bg-gray-900 p-8 rounded-xl military-border hover:border-green-500 transition duration-300">
+                    <div class="w-12 h-12 bg-green-900 bg-opacity-30 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-green-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-medium text-white mb-3">Visual Progress Tracking</h3>
+                    <p class="text-gray-400">
+                        Advanced D3.js visualizations show your priority completion rates across daily, weekly, and monthly timeframes.
+                    </p>
+                </div>
+                <div class="bg-gray-900 p-8 rounded-xl military-border hover:border-purple-500 transition duration-300">
+                    <div class="w-12 h-12 bg-purple-900 bg-opacity-30 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-sliders-h text-purple-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-medium text-white mb-3">Flexible Priority Levels</h3>
+                    <p class="text-gray-400">
+                        Adjust your focus between 1-3 major priorities based on your capacity. The system adapts to your current workload.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-20 bg-gradient-to-b from-black to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Interactive Demo</h2>
+            <p class="text-center text-gray-400 max-w-2xl mx-auto mb-12">
+                Try the priority slider to see how R3K helps you maintain focus. Watch the visualization change as you adjust your daily capacity.
+            </p>
+            
+            <div class="flex flex-col lg:flex-row gap-8 items-center">
+                <div class="lg:w-1/2 w-full">
+                    <div class="bg-gray-900 p-8 rounded-xl military-border h-full">
+                        <div class="mb-6">
+                            <label for="priorityRange" class="block text-sm font-medium text-gray-300 mb-2">Daily Priority Level: <span id="priorityValue" class="font-bold">1</span></label>
+                            <input type="range" min="1" max="3" value="1" step="1" id="priorityRange" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer priority-slider">
+                        </div>
+                        
+                        <div class="flex justify-between mb-4">
+                            <span class="text-xs text-gray-500">Minimal (1)</span>
+                            <span class="text-xs text-gray-500">Balanced (2)</span>
+                            <span class="text-xs text-gray-500">Ambitious (3)</span>
+                        </div>
+                        
+                        <div class="relative w-full h-64 mb-8" id="rippleContainer">
+                            <!-- D3.js visualization will be inserted here -->
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="rippleBtn" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition duration-300">
+                                Generate Priority Ripple
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 w-full">
+                    <div class="bg-gray-900 p-8 rounded-xl military-border h-full">
+                        <h3 class="text-xl font-medium text-white mb-4">Your Big <span id="priorityCount">1</span> for Today</h3>
+                        
+                        <div id="priorityInputs" class="space-y-4">
+                            <div class="priority-input-group">
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Priority 1</label>
+                                <input type="text" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your most important task...">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition duration-300 flex items-center justify-center">
+                                <i class="fas fa-save mr-2"></i> Save Priorities
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-gray-800 rounded-md">
+                            <h4 class="text-sm font-medium text-gray-300 mb-2">Focus Recommendation</h4>
+                            <p id="focusRecommendation" class="text-sm text-gray-400">
+                                Based on your recent completion rate, we recommend focusing on 1 priority today.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization Section -->
+    <section id="visualization" class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-16 gradient-text">Priority Visualization</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-gray-900 p-6 rounded-xl military-border">
+                    <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt text-blue-400 mr-2"></i> Monthly View
+                    </h3>
+                    <div class="w-full h-64" id="monthlyChart">
+                        <!-- Monthly D3 chart will be inserted here -->
+                    </div>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-xl military-border">
+                    <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <i class="fas fa-calendar-week text-green-400 mr-2"></i> Weekly View
+                    </h3>
+                    <div class="w-full h-64" id="weeklyChart">
+                        <!-- Weekly D3 chart will be inserted here -->
+                    </div>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-xl military-border">
+                    <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                        <i class="fas fa-calendar-day text-purple-400 mr-2"></i> Daily View
+                    </h3>
+                    <div class="w-full h-64" id="dailyChart">
+                        <!-- Daily D3 chart will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-900 p-8 rounded-xl military-border">
+                <h3 class="text-xl font-medium text-white mb-6 flex items-center justify-center">
+                    <i class="fas fa-chart-pie text-yellow-400 mr-2"></i> Priority Completion Analytics
+                </h3>
+                <div class="w-full h-96" id="analyticsChart">
+                    <!-- Analytics D3 chart will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section id="feedback" class="py-20 bg-gradient-to-b from-black to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Feedback & Notes</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-gray-900 p-8 rounded-xl military-border">
+                    <h3 class="text-xl font-medium text-white mb-6">Add a Note</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Note Color</label>
+                        <div class="flex space-x-2 mb-4">
+                            <button class="w-8 h-8 rounded-full bg-yellow-400 border-2 border-transparent hover:border-white focus:outline-none note-color" data-color="yellow"></button>
+                            <button class="w-8 h-8 rounded-full bg-green-400 border-2 border-transparent hover:border-white focus:outline-none note-color" data-color="green"></button>
+                            <button class="w-8 h-8 rounded-full bg-pink-400 border-2 border-transparent hover:border-white focus:outline-none note-color" data-color="pink"></button>
+                            <button class="w-8 h-8 rounded-full bg-blue-400 border-2 border-transparent hover:border-white focus:outline-none note-color" data-color="blue"></button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Note Content</label>
+                        <textarea class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Write your note here..." id="noteContent"></textarea>
+                    </div>
+                    <button id="addNoteBtn" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition duration-300">
+                        <i class="fas fa-plus mr-2"></i> Add Note
+                    </button>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-medium text-white mb-6">Your Notes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="notesContainer">
+                        <!-- Notes will be added here -->
+                        <div class="post-it yellow p-4 rounded transform cursor-move">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="font-medium">Great progress today!</span>
+                                <button class="text-gray-600 hover:text-gray-800 delete-note">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <p class="text-sm">Completed all 3 priorities ahead of schedule. Need to maintain this momentum.</p>
+                            <div class="text-right mt-2 text-xs text-gray-600">Today, 4:32 PM</div>
+                        </div>
+                        <div class="post-it green p-4 rounded transform cursor-move">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="font-medium">Meeting reminder</span>
+                                <button class="text-gray-600 hover:text-gray-800 delete-note">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <p class="text-sm">Discuss quarterly goals with team at 2pm tomorrow.</p>
+                            <div class="text-right mt-2 text-xs text-gray-600">Yesterday, 6:15 PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 gradient-text">Ready to Take Control of Your Priorities?</h2>
+            <p class="text-xl text-gray-400 mb-10 max-w-3xl mx-auto">
+                Join thousands of focused professionals who use R3K to eliminate distractions and accomplish what truly matters.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white px-8 py-4 rounded-md text-lg font-bold transition duration-300">
+                    Start Free Trial
+                </a>
+                <a href="#" class="bg-transparent border-2 border-blue-500 hover:bg-blue-900 hover:bg-opacity-20 text-white px-8 py-4 rounded-md text-lg font-bold transition duration-300">
+                    See Pricing
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">R3K</h3>
+                    <p class="text-gray-400 text-sm">
+                        The ultimate priority management system for focused professionals.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">API</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Integrations</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Guides</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Support</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Privacy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white text-sm">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                    © 2023 R3K. All rights reserved.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Priority Slider Interaction
+        const prioritySlider = document.getElementById('prioritySlider');
+        const priorityRange = document.getElementById('priorityRange');
+        const priorityValue = document.getElementById('priorityValue');
+        const priorityCount = document.getElementById('priorityCount');
+        const priorityInputs = document.getElementById('priorityInputs');
+        const focusRecommendation = document.getElementById('focusRecommendation');
+        const ring1 = document.getElementById('ring1');
+        const ring2 = document.getElementById('ring2');
+        const ring3 = document.getElementById('ring3');
+        
+        // Update priority visualization
+        function updatePriorityVisualization(value) {
+            priorityValue.textContent = value;
+            priorityCount.textContent = value;
+            
+            // Update rings visibility
+            ring1.style.opacity = value >= 1 ? '1' : '0';
+            ring2.style.opacity = value >= 2 ? '1' : '0';
+            ring3.style.opacity = value >= 3 ? '1' : '0';
+            
+            // Update focus recommendation
+            const recommendations = [
+                "Based on your recent completion rate, we recommend focusing on 1 priority today.",
+                "You're maintaining good momentum. 2 priorities seems achievable today.",
+                "Ambitious! Make sure to schedule breaks between these 3 priorities."
+            ];
+            focusRecommendation.textContent = recommendations[value - 1];
+            
+            // Update input fields
+            priorityInputs.innerHTML = '';
+            for (let i = 0; i < value; i++) {
+                const priorityGroup = document.createElement('div');
+                priorityGroup.className = 'priority-input-group';
+                priorityGroup.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Priority ${i + 1}</label>
+                    <input type="text" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your priority ${i + 1}...">
+                `;
+                priorityInputs.appendChild(priorityGroup);
+            }
+        }
+        
+        prioritySlider.addEventListener('input', function() {
+            updatePriorityVisualization(this.value);
+        });
+        
+        priorityRange.addEventListener('input', function() {
+            updatePriorityVisualization(this.value);
+        });
+        
+        // Initialize with 1 priority
+        updatePriorityVisualization(1);
+        
+        // Ripple Effect
+        const rippleBtn = document.getElementById('rippleBtn');
+        const rippleContainer = document.getElementById('rippleContainer');
+        
+        rippleBtn.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple-effect';
+            
+            // Position the ripple
+            const rect = rippleContainer.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            rippleContainer.appendChild(ripple);
+            
+            // Remove ripple after animation
+            setTimeout(() => {
+                ripple.remove();
+            }, 1000);
+        });
+        
+        // Create D3 visualization for priority ripple
+        function createPriorityRipple() {
+            const width = rippleContainer.clientWidth;
+            const height = rippleContainer.clientHeight;
+            const priorityLevel = parseInt(priorityRange.value);
+            
+            // Clear previous SVG
+            d3.select(rippleContainer).selectAll("*").remove();
+            
+            const svg = d3.select(rippleContainer)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            // Add center dot
+            svg.append("circle")
+                .attr("cx", width / 2)
+                .attr("cy", height / 2)
+                .attr("r", 8)
+                .attr("fill", "#ffffff");
+            
+            // Add rings based on priority level
+            if (priorityLevel >= 1) {
+                svg.append("circle")
+                    .attr("cx", width / 2)
+                    .attr("cy", height / 2)
+                    .attr("r", width * 0.25)
+                    .attr("fill", "none")
+                    .attr("stroke", "#00ff9d")
+                    .attr("stroke-width", 4)
+                    .attr("stroke-dasharray", "5,5")
+                    .attr("opacity", 0.7);
+            }
+            
+            if (priorityLevel >= 2) {
+                svg.append("circle")
+                    .attr("cx", width / 2)
+                    .attr("cy", height / 2)
+                    .attr("r", width * 0.4)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ffcc00")
+                    .attr("stroke-width", 4)
+                    .attr("stroke-dasharray", "5,5")
+                    .attr("opacity", 0.7);
+            }
+            
+            if (priorityLevel >= 3) {
+                svg.append("circle")
+                    .attr("cx", width / 2)
+                    .attr("cy", height / 2)
+                    .attr("r", width * 0.5)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ff3333")
+                    .attr("stroke-width", 4)
+                    .attr("stroke-dasharray", "5,5")
+                    .attr("opacity", 0.7);
+            }
+            
+            // Add animated ripple
+            const ripple = svg.append("circle")
+                .attr("cx", width / 2)
+                .attr("cy", height / 2)
+                .attr("r", 8)
+                .attr("fill", "none")
+                .attr("stroke", "#00b8ff")
+                .attr("stroke-width", 2)
+                .attr("opacity", 1);
+            
+            ripple.transition()
+                .duration(1500)
+                .attr("r", width * 0.6)
+                .attr("opacity", 0)
+                .ease(d3.easeQuadIn)
+                .remove();
+        }
+        
+        // Initialize ripple visualization
+        createPriorityRipple();
+        priorityRange.addEventListener('input', createPriorityRipple);
+        
+        // Create sample D3 charts for visualization section
+        function createMonthlyChart() {
+            const width = document.getElementById('monthlyChart').clientWidth;
+            const height = document.getElementById('monthlyChart').clientHeight;
+            
+            const data = [
+                {month: "Jan", completed: 80, planned: 90},
+                {month: "Feb", completed: 65, planned: 85},
+                {month: "Mar", completed: 90, planned: 95},
+                {month: "Apr", completed: 75, planned: 85},
+                {month: "May", completed: 85, planned: 90},
+                {month: "Jun", completed: 95, planned: 95}
+            ];
+            
+            const svg = d3.select("#monthlyChart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.month))
+                .range([40, width - 20])
+                .padding(0.2);
+            
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .range([height - 30, 30]);
+            
+            // Add planned bars
+            svg.selectAll(".planned")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "planned")
+                .attr("x", d => x(d.month))
+                .attr("y", d => y(d.planned))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - 30 - y(d.planned))
+                .attr("fill", "#2d3748")
+                .attr("rx", 4)
+                .attr("ry", 4);
+            
+            // Add completed bars
+            svg.selectAll(".completed")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "completed")
+                .attr("x", d => x(d.month))
+                .attr("y", d => y(d.completed))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - 30 - y(d.completed))
+                .attr("fill", d => d.completed >= d.planned ? "#00ff9d" : "#ffcc00")
+                .attr("rx", 4)
+                .attr("ry", 4);
+            
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0, ${height - 30})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("fill", "#718096");
+            
+            svg.append("g")
+                .attr("transform", "translate(40, 0)")
+                .call(d3.axisLeft(y).ticks(5))
+                .selectAll("text")
+                .style("fill", "#718096");
+        }
+        
+        function createWeeklyChart() {
+            const width = document.getElementById('weeklyChart').clientWidth;
+            const height = document.getElementById('weeklyChart').clientHeight;
+            
+            const data = [
+                {week: "W1", priorities: 12, completed: 10},
+                {week: "W2", priorities: 14, completed: 12},
+                {week: "W3", priorities: 10, completed: 8},
+                {week: "W4", priorities: 15, completed: 14}
+            ];
+            
+            const svg = d3.select("#weeklyChart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.week))
+                .range([40, width - 20])
+                .padding(0.2);
+            
+            const y = d3.scaleLinear()
+                .domain([0, 20])
+                .range([height - 30, 30]);
+            
+            // Add line
+            const line = d3.line()
+                .x(d => x(d.week) + x.bandwidth() / 2)
+                .y(d => y(d.completed));
+            
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "#00b8ff")
+                .attr("stroke-width", 3)
+                .attr("d", line);
+            
+            // Add dots
+            svg.selectAll(".dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "dot")
+                .attr("cx", d => x(d.week) + x.bandwidth() / 2)
+                .attr("cy", d => y(d.completed))
+                .attr("r", 5)
+                .attr("fill", "#ffffff")
+                .attr("stroke", "#00b8ff")
+                .attr("stroke-width", 2);
+            
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0, ${height - 30})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("fill", "#718096");
+            
+            svg.append("g")
+                .attr("transform", "translate(40, 0)")
+                .call(d3.axisLeft(y).ticks(5))
+                .selectAll("text")
+                .style("fill", "#718096");
+        }
+        
+        function createDailyChart() {
+            const width = document.getElementById('dailyChart').clientWidth;
+            const height = document.getElementById('dailyChart').clientHeight;
+            
+            const data = [
+                {day: "Mon", completed: 3, planned: 3},
+                {day: "Tue", completed: 2, planned: 3},
+                {day: "Wed", completed: 3, planned: 3},
+                {day: "Thu", completed: 1, planned: 3},
+                {day: "Fri", completed: 2, planned: 2},
+                {day: "Sat", completed: 0, planned: 0},
+                {day: "Sun", completed: 0, planned: 0}
+            ];
+            
+            const svg = d3.select("#dailyChart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            const x = d3.scaleBand()
+                .domain(data.map(d => d.day))
+                .range([40, width - 20])
+                .padding(0.2);
+            
+            const y = d3.scaleLinear()
+                .domain([0, 3])
+                .range([height - 30, 30]);
+            
+            // Add planned dots
+            svg.selectAll(".planned-dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "planned-dot")
+                .attr("cx", d => x(d.day) + x.bandwidth() / 2)
+                .attr("cy", d => y(d.planned))
+                .attr("r", 5)
+                .attr("fill", "none")
+                .attr("stroke", "#718096")
+                .attr("stroke-width", 2);
+            
+            // Add completed dots
+            svg.selectAll(".completed-dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "completed-dot")
+                .attr("cx", d => x(d.day) + x.bandwidth() / 2)
+                .attr("cy", d => y(d.completed))
+                .attr("r", 5)
+                .attr("fill", d => d.completed >= d.planned ? "#00ff9d" : "#ffcc00")
+                .attr("stroke", "#ffffff")
+                .attr("stroke-width", 1);
+            
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0, ${height - 30})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .style("fill", "#718096");
+            
+            svg.append("g")
+                .attr("transform", "translate(40, 0)")
+                .call(d3.axisLeft(y).ticks(3))
+                .selectAll("text")
+                .style("fill", "#718096");
+        }
+        
+        function createAnalyticsChart() {
+            const width = document.getElementById('analyticsChart').clientWidth;
+            const height = document.getElementById('analyticsChart').clientHeight;
+            
+            const data = [
+                {priority: "P1", completionRate: 92, avgTime: 2.5},
+                {priority: "P2", completionRate: 78, avgTime: 3.8},
+                {priority: "P3", completionRate: 65, avgTime: 5.2}
+            ];
+            
+            const svg = d3.select("#analyticsChart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            const radius = Math.min(width, height) / 2 - 40;
+            
+            const pie = d3.pie()
+                .value(d => d.completionRate)
+                .sort(null);
+            
+            const arc = d3.arc()
+                .innerRadius(radius * 0.5)
+                .outerRadius(radius);
+            
+            const arcs = pie(data);
+            
+            const color = d3.scaleOrdinal()
+                .domain(data.map(d => d.priority))
+                .range(["#00ff9d", "#ffcc00", "#ff3333"]);
+            
+            // Add arcs
+            svg.selectAll(".arc")
+                .data(arcs)
+                .enter()
+                .append("path")
+                .attr("class", "arc")
+                .attr("d", arc)
+                .attr("fill", d => color(d.data.priority))
+                .attr("stroke", "#0a0a0a")
+                .attr("stroke-width", 2)
+                .attr("transform", `translate(${width / 2}, ${height / 2})`);
+            
+            // Add labels
+            svg.selectAll(".label")
+                .data(arcs)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", d => {
+                    const pos = arc.centroid(d);
+                    pos[0] = pos[0] * 1.5 + width / 2;
+                    pos[1] = pos[1] * 1.5 + height / 2;
+                    return `translate(${pos[0]}, ${pos[1]})`;
+                })
+                .attr("text-anchor", "middle")
+                .text(d => `${d.data.priority}: ${d.data.completionRate}%`)
+                .style("fill", "#ffffff")
+                .style("font-size", "12px");
+            
+            // Add legend
+            const legend = svg.append("g")
+                .attr("transform", `translate(${width - 150}, 30)`);
+            
+            data.forEach((d, i) => {
+                const legendItem = legend.append("g")
+                    .attr("transform", `translate(0, ${i * 25})`);
+                
+                legendItem.append("rect")
+                    .attr("width", 20)
+                    .attr("height", 20)
+                    .attr("fill", color(d.priority));
+                
+                legendItem.append("text")
+                    .attr("x", 30)
+                    .attr("y", 15)
+                    .text(`${d.priority} (${d.avgTime}h avg)`)
+                    .style("fill", "#ffffff")
+                    .style("font-size", "12px");
+            });
+        }
+        
+        // Create charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createMonthlyChart();
+            createWeeklyChart();
+            createDailyChart();
+            createAnalyticsChart();
+        });
+        
+        // Post-it Notes functionality
+        const noteColorButtons = document.querySelectorAll('.note-color');
+        const noteContent = document.getElementById('noteContent');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const notesContainer = document.getElementById('notesContainer');
+        
+        let selectedColor = 'yellow';
+        
+        noteColorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove border from all buttons
+                noteColorButtons.forEach(btn => {
+                    btn.classList.remove('border-white');
+                    btn.classList.add('border-transparent');
+                });
+                
+                // Add border to selected button
+                this.classList.remove('border-transparent');
+                this.classList.add('border-white');
+                
+                selectedColor = this.getAttribute('data-color');
+            });
+        });
+        
+        addNoteBtn.addEventListener('click', function() {
+            if (noteContent.value.trim() === '') return;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            const note = document.createElement('div');
+            note.className = `post-it ${selectedColor} p-4 rounded transform cursor-move`;
+            note.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-medium">New Note</span>
+                    <button class="text-gray-600 hover:text-gray-800 delete-note">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="text-sm">${noteContent.value}</p>
+                <div class="text-right mt-2 text-xs text-gray-600">Today, ${timeString}</div>
+            `;
+            
+            notesContainer.prepend(note);
+            noteContent.value = '';
+            
+            // Add delete functionality
+            note.querySelector('.delete-note').addEventListener('click', function() {
+                note.remove();
+            });
+        });
+        
+        // Add delete functionality to existing notes
+        document.querySelectorAll('.delete-note').forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.post-it').remove();
+            });
+        });
+    </script>
+</body>
+</html>
